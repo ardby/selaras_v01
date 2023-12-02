@@ -23,7 +23,9 @@ class _AdLayoutState extends State<AdSlider> {
             autoPlay: true,
             autoPlayInterval: adDuration,
             enlargeCenterPage: true,
+            viewportFraction: viewportFraction,
             aspectRatio: adAspectRatio,
+            clipBehavior: Clip.hardEdge,
             onPageChanged: (index, reason) {
               setState(() {
                 currentAd = index;

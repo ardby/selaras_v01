@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'top_section.dart';
 import 'ad_section.dart';
 import 'interactive_group.dart';
+import 'info_section.dart';
 
 class ScreenLayout extends StatefulWidget {
   final List<dynamic> appData;
@@ -28,7 +29,12 @@ class _ScreenLayoutState extends State<ScreenLayout>
       children: <Widget>[
         TopSection(appData: widget.appData),
         const AdSlider(),
-        InteractiveGroup(appData: widget.appData),
+        Stack(
+          children: [
+            InteractiveGroup(appData: widget.appData),
+            InfoSection(appData: widget.appData),
+          ],
+        ),
       ],
     );
   }

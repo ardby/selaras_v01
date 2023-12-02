@@ -16,66 +16,33 @@ double screenWidth(BuildContext context, double percentage) {
 }
 
 double getVRatio(BuildContext context) {
-  return screenHeight(context, 0.1);
+  return screenHeight(context, 1.0);
 }
 
 double getHRatio(BuildContext context) {
-  return screenWidth(context, 0.1);
+  return screenWidth(context, 1.0);
 }
 
 // Menghitung rasio berdasarkan form terkecil (horiz/vert) dari layar
 double getMinARatio(BuildContext context) {
-  double rX = screenWidth(context, 0.1);
-  double rY = screenWidth(context, 0.1);
+  double rX = screenWidth(context, 1.0);
+  double rY = screenWidth(context, 1.0);
   return rX < rY ? rX : rY;
 }
 
 // Menghitung rasio berdasarkan form terbesar (horiz/vert) dari layar
 double getMaxARatio(BuildContext context) {
-  double rX = screenWidth(context, 0.1);
-  double rY = screenWidth(context, 0.1);
+  double rX = screenWidth(context, 1.0);
+  double rY = screenWidth(context, 1.0);
   return rX > rY ? rX : rY;
 }
 
-// ----------------------------------------------------------------------------
-
-// ==================================================================================================
-// Color Definition
-// ==================================================================================================
-const mediumGreen = Color(0xFF03AC0E);
-const mediumGray = Color(0xFFD6D6D6);
-const lightGreen = Color(0xFFEFFAF5);
-const mediumOrange = Color(0xFFFCB259);
-
-// ==================================================================================================
-// Text Definition
-// ==================================================================================================
-TextStyle smallText(BuildContext context) {
-  return GoogleFonts.inter(fontSize: 32 * getMinARatio(context));
-}
-
-// ==================================================================================================
-// Top Section
-// ==================================================================================================
-const topSectionHeight = 4.0; // Tinggi top section dalam persen
-const topSectionSearchColor = lightGreen;
-const topSectionIconPadding = 1.2; // Padding dalam persen
-const topSectionPadding = 20.0; // Padding luar dari top section dlm persen
-
-// Mengatur border dari search box di bagian atas screen
-OutlineInputBorder searchBoxBorder = OutlineInputBorder(
-  borderRadius: BorderRadius.circular(20.0),
-  borderSide: const BorderSide(
-    color: Color(0xFFD6D6D6),
-  ),
-);
-
-// Menampilkan icon di bagian atas screen, sejajar dengan search box
-Container topSectionIcon(BuildContext context, String iconFile) {
+// Menampilkan icon
+Container showIcon(BuildContext context, String iconFile, double padding) {
   return Container(
     alignment: Alignment.center,
     child: Padding(
-      padding: EdgeInsets.all(screenWidth(context, topSectionIconPadding)),
+      padding: EdgeInsets.all(screenWidth(context, padding)),
       child: Center(
         child: SvgPicture.asset(
           'assets/icons/$iconFile.svg',
@@ -84,6 +51,66 @@ Container topSectionIcon(BuildContext context, String iconFile) {
     ),
   );
 }
+
+// Menampilkan icon dengan width (dalam persen)
+Container showIconWidth(
+    BuildContext context, String iconFile, double padding, double width) {
+  return Container(
+    alignment: Alignment.center,
+    child: Padding(
+      padding: EdgeInsets.all(screenWidth(context, padding)),
+      child: Center(
+        child: SvgPicture.asset(
+          'assets/icons/$iconFile.svg',
+          width: screenWidth(context, width),
+        ),
+      ),
+    ),
+  );
+}
+
+// ----------------------------------------------------------------------------
+
+// ==================================================================================================
+// Color Definition
+// ==================================================================================================
+const mediumGreen = Color(0xFF03AC0E);
+const lightGreen = Color(0xFFEFFAF5);
+const strongGray = Color(0xFF666666);
+const mediumGray = Color(0xFFD6D6D6);
+const mediumOrange = Color(0xFFFCB259);
+
+// ==================================================================================================
+// Text Definition
+// ==================================================================================================
+TextStyle smallText(BuildContext context) {
+  return GoogleFonts.inter(fontSize: 3.2 * getMinARatio(context));
+}
+
+TextStyle specialText(BuildContext context) {
+  return GoogleFonts.inter(
+    fontSize: 4 * getMinARatio(context),
+    color: strongGray,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 1.0,
+  );
+}
+
+// ==================================================================================================
+// Top Section
+// ==================================================================================================
+const topSectionHeight = 4.0; // Tinggi top section dalam persen
+const topSectionSearchColor = lightGreen;
+const topSectionIconPadding = 1.2; // Padding dalam persen
+const topSectionPadding = 2.5; // Padding luar dari top section dlm persen
+
+// Mengatur border dari search box di bagian atas screen
+OutlineInputBorder searchBoxBorder = OutlineInputBorder(
+  borderRadius: BorderRadius.circular(20.0),
+  borderSide: const BorderSide(
+    color: Color(0xFFD6D6D6),
+  ),
+);
 
 EdgeInsets topSectionOuterPadding(BuildContext context) {
   return EdgeInsets.all(topSectionPadding * getMinARatio(context));
@@ -104,10 +131,11 @@ final List<String> adList = [
 
 const adIndicatorColor = mediumGray;
 const adActiveIndicatorColor = mediumGreen;
-const adDuration = Duration(seconds: 3);
-const adPercentageHeight = 25.0;
-const adIndicatorWidth = 3.0; // Dalam persen terhadap lebar layar
-const adActiveIndicatorWidth = 3.5; // Dalam persen terhadap lebar layar
+const adDuration = Duration(seconds: 10);
+const adPercentageHeight = 20.0;
+const viewportFraction = 0.6;
+const adIndicatorWidth = 2.5; // Dalam persen terhadap lebar layar
+const adActiveIndicatorWidth = 3.0; // Dalam persen terhadap lebar layar
 const adAnimationDuration = Duration(milliseconds: 800);
 const adAspectRatio = 16 / 9;
 
@@ -115,16 +143,42 @@ EdgeInsets adPadding(BuildContext context) {
   double rX = getHRatio(context);
   double rY = getVRatio(context);
   return EdgeInsets.only(
-      left: 4 * rX, right: 4 * rX, top: 0 * rY, bottom: 8 * rY);
+      left: 0.4 * rX, right: 0.4 * rX, top: 0.0 * rY, bottom: 0.8 * rY);
 }
 
 EdgeInsets adIndicatorSpacing(BuildContext context) {
   double rX = getHRatio(context);
   double rY = getVRatio(context);
   return EdgeInsets.only(
-      left: 8 * rX, right: 8 * rX, top: 8 * rY, bottom: 12 * rY);
+      left: 0.8 * rX, right: 0.8 * rX, top: 0.8 * rY, bottom: 1.2 * rY);
 }
 
 BorderRadius adBorderRadius(BuildContext context) {
-  return BorderRadius.circular(32 * getMinARatio(context));
+  return BorderRadius.circular(3.2 * getMinARatio(context));
+}
+
+// ==================================================================================================
+// Interactive Group
+// ==================================================================================================
+
+const igHeight = 60.0; // Tinggi area dalam persen
+const igWidth = 100.0; // Lebar area dalam persen
+const igBackgroundColor = mediumOrange;
+const igInsetPaddingRatio = 1.0; // Lebar pinggiran dalam persen
+
+EdgeInsetsGeometry igInsetPadding(BuildContext context) {
+  return EdgeInsets.all(screenHeight(context, igInsetPaddingRatio));
+}
+
+// ==================================================================================================
+// Info Section
+// ==================================================================================================
+
+const infoHeight = 40.0; // Tinggi area dalam persen
+const infoTopPosition = 20.0; // Posisi dari atas, setelah iklan (dalam persen)
+const infoTopRadiusRatio = 10.0; // Radius lengkungan di kiri dan kanan (%)
+const infoBackgroundColor = lightGreen;
+
+Radius infoTopRadius(BuildContext context) {
+  return Radius.circular(getMinARatio(context) * infoTopRadiusRatio);
 }

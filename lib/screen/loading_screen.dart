@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screen_layout.dart';
@@ -29,7 +30,9 @@ class LoadingScreenState extends State<LoadingScreen> {
       Provider.of<DataProvider>(context, listen: false).updateData(data);
       return data;
     } catch (error) {
-      print('Error fetching data: $error');
+      if (kDebugMode) {
+        print('Error fetching data: $error');
+      }
       return [];
     }
   }
@@ -59,6 +62,5 @@ class LoadingScreenState extends State<LoadingScreen> {
         ),
       ),
     );
-    throw UnimplementedError();
   }
 }

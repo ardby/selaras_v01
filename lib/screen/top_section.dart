@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:selaras_v01/constants.dart';
 
 class TopSection extends StatelessWidget {
-  List<dynamic> appData;
+  final List<dynamic> appData;
 
-  TopSection({
+  const TopSection({
     Key? key,
     required this.appData,
   }) : super(key: key);
@@ -34,9 +34,9 @@ class TopSection extends StatelessWidget {
                 ),
               ),
             ),
-            topSectionIcon(context, 'CNHN'),
-            topSectionIcon(context, 'Pengaturan'),
-            topSectionIcon(context, 'Jamaah'),
+            showIcon(context, 'CNHN', topSectionIconPadding),
+            showIcon(context, 'setting-icon', topSectionIconPadding),
+            showIcon(context, 'jamaah-icon', topSectionIconPadding),
           ],
         ),
       ),
