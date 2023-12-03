@@ -2,8 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screen_layout.dart';
-import '../data/api_service.dart';
-import '../data/data_provider.dart';
+import '../services/api_service.dart';
+import '../services/data_notifier.dart';
+import '../services/headset_notifier.dart';
+import 'package:headset_connection_event/headset_event.dart';
 //import 'archive/app_title.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -17,17 +19,43 @@ class LoadingScreen extends StatefulWidget {
 
 class LoadingScreenState extends State<LoadingScreen> {
   late Future<List<dynamic>> _futureData;
+  final _headsetPlugin = HeadsetEvent();
+  HeadsetState? _headsetState;
+
+  void onHeadsetStatusChanged(bool isConnected) {
+    final notifier = Provider.of<HeadsetStatusNotifier>(context, listen: false);
+    notifier.updateHeadsetStatus(isConnected);
+  }
 
   @override
   void initState() {
     super.initState();
     _futureData = _fetchData();
+
+    ///Request Permissions (Required for Android 12)
+    _headsetPlugin.requestPermission();
+
+    /// if headset is plugged
+    _headsetPlugin.getCurrentState.then((_val) {
+      setState(() {
+        _headsetState = _val;
+        onHeadsetStatusChanged(_headsetState == HeadsetState.CONNECT);
+      });
+    });
+
+    /// Detect the moment headset is plugged or unplugged
+    _headsetPlugin.setListener((_val) {
+      setState(() {
+        _headsetState = _val;
+        onHeadsetStatusChanged(_headsetState == HeadsetState.CONNECT);
+      });
+    });
   }
 
   Future<List<dynamic>> _fetchData() async {
     try {
       final data = await widget.apiService.fetchData();
-      Provider.of<DataProvider>(context, listen: false).updateData(data);
+      Provider.of<DataNotifier>(context, listen: false).updateData(data);
       return data;
     } catch (error) {
       if (kDebugMode) {

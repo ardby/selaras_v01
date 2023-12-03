@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class DataProvider extends ChangeNotifier {
+class DataNotifier extends ChangeNotifier {
   late List<dynamic> _appData = [];
   List<dynamic> get appData => _appData;
 

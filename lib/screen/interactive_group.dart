@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:selaras_v01/constants.dart';
 
-class InteractiveGroup extends StatefulWidget {
-  List<dynamic> appData;
+class InteractiveGroup extends StatelessWidget {
+  final List<dynamic> appData;
 
-  InteractiveGroup({
+  const InteractiveGroup({
     Key? key,
     required this.appData,
   }) : super(key: key);
 
-  @override
-  State<InteractiveGroup> createState() => _InteractiveGroupState();
-}
-
-class _InteractiveGroupState extends State<InteractiveGroup> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,45 +18,63 @@ class _InteractiveGroupState extends State<InteractiveGroup> {
       color: igBackgroundColor,
       child: Align(
         alignment: Alignment.topCenter,
-        child: Container(
+        child: SizedBox(
           width: screenWidth(context, igWidth),
           height: screenHeight(
               context, igHeight - infoHeight - 2 * igInsetPaddingRatio),
-//          color: Colors.blue,
-          child: Row(
+          child: Stack(
             children: [
-              Stack(
-                children: [
-                  Container(
-                    width: screenWidth(context, 35.0),
-                    height: screenHeight(context, 35.0),
-//                    color: Colors.green,
-                    child: Transform.rotate(
-                      angle: 3.14159265359 / 2 * 3,
-                      child: Container(
-                        padding: EdgeInsets.only(top: 10.0),
-                        alignment: Alignment.topCenter,
-                        child: Text(
-                          'Grup Interaktif',
-                          style: specialText(context),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
+              SizedBox(
+                width: igTitleBoxWidth(context),
+                height: igTitleBoxWidth(context),
+                child: Transform.rotate(
+                  angle: igTitleAngle,
+                  child: Container(
+                    padding: igTitleLeftPadding(context),
+                    alignment: Alignment.topCenter,
+                    child: Text(
+                      igTitleText,
+                      style: specialText(context),
+//                          textAlign: TextAlign.center,
                     ),
                   ),
-                  Positioned(
-                    left: 32.0,
-                    top: 4.0,
-                    child: Column(
-                      children: [
-                        showIconWidth(context, 'thawaf-icon', 1.2, 8.0),
-                        showIconWidth(context, 'sai-icon', 1.2, 8.0),
-                        showIconWidth(context, 'wisata-icon', 1.2, 8.0),
-                        showIconWidth(context, 'muthawif-icon', 1.2, 8.0),
-                      ],
-                    ),
+                ),
+              ),
+              Positioned(
+                left: igIconLeftPadding(context),
+                top: 0.0,
+                child: Column(
+                  children: [
+                    showIconWidth(context, igIcon1, igIconPadding, igIconWidth),
+                    showIconWidth(context, igIcon2, igIconPadding, igIconWidth),
+                    showIconWidth(context, igIcon3, igIconPadding, igIconWidth),
+                    showIconWidth(context, igIcon4, igIconPadding, igIconWidth),
+                  ],
+                ),
+              ),
+              Positioned(
+                left: igStatusLeftPadding(context),
+                top: 0.0,
+                child: Container(
+                  alignment: Alignment.center,
+//                  color: Colors.green,
+                  height: screenHeight(
+                      context, igHeight - infoHeight - 2 * igInsetPaddingRatio),
+                  child: Text(
+                    'Mohon siapkan\nheadset Anda',
+                    style: mediumText(context, strongGray),
                   ),
-                ],
+                ),
+              ),
+              Positioned(
+                left: igHeadsetLeftPadding(context),
+                top: 0.0,
+                child: Container(
+                    height: screenHeight(context,
+                        igHeight - infoHeight - 2 * igInsetPaddingRatio),
+                    alignment: Alignment.center,
+                    child: showIcon(
+                        context, 'headset-off', topSectionIconPadding)),
               ),
             ],
           ),
@@ -70,14 +83,3 @@ class _InteractiveGroupState extends State<InteractiveGroup> {
     );
   }
 }
-
-// Transform.rotate(
-// angle: 3.14159265359 / 2 * 3,
-// child: Container(
-// color: Colors.blue,
-// child: Text(
-// 'Grup Interaktif',
-// style: specialText(context),
-// ),
-// ),
-// ),

@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'data/data_provider.dart';
+import 'services/data_notifier.dart';
+import 'services/headset_notifier.dart';
 import 'screen/loading_screen.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => DataProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<DataNotifier>(
+          create: (context) => DataNotifier(), // Nantinya kalau perlu data API
+        ),
+        ChangeNotifierProvider<HeadsetStatusNotifier>(
+          create: (context) =>
+              HeadsetStatusNotifier(), // Provider dari status headset
+        ),
+      ],
       child: const Selaras(),
     ),
   );
@@ -21,9 +30,6 @@ class Selaras extends StatelessWidget {
       scaffoldBackgroundColor: Colors.white,
     );
     return MaterialApp(
-      // theme: ThemeData(
-      //   visualDensity: VisualDensity.standard,
-      // ),
       theme: themeData,
       home: LoadingScreen(),
     );

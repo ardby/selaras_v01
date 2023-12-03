@@ -76,41 +76,64 @@ Container showIconWidth(
 // ==================================================================================================
 const mediumGreen = Color(0xFF03AC0E);
 const lightGreen = Color(0xFFEFFAF5);
-const strongGray = Color(0xFF666666);
-const mediumGray = Color(0xFFD6D6D6);
+const strongGray = Color(0xFF606060);
+const mediumGray = Color(0xFFAAAAAA);
 const mediumOrange = Color(0xFFFCB259);
+const specialTextColor = Color(0xFF7E592C);
 
 // ==================================================================================================
 // Text Definition
 // ==================================================================================================
-TextStyle smallText(BuildContext context) {
-  return GoogleFonts.inter(fontSize: 3.2 * getMinARatio(context));
+TextStyle smallText(BuildContext context, Color color) {
+  return GoogleFonts.inter(
+    fontSize: 3.2 * getMinARatio(context),
+    color: color,
+  );
+}
+
+TextStyle mediumText(BuildContext context, Color color) {
+  return GoogleFonts.inter(
+    fontSize: 3.8 * getMinARatio(context),
+    fontWeight: FontWeight.w600,
+    color: color,
+  );
 }
 
 TextStyle specialText(BuildContext context) {
   return GoogleFonts.inter(
-    fontSize: 4 * getMinARatio(context),
-    color: strongGray,
-    fontWeight: FontWeight.w500,
-    letterSpacing: 1.0,
+    fontSize: 3.8 * getMinARatio(context),
+    color: specialTextColor,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 0.8,
   );
 }
+
+// ==================================================================================================
+// Other Common Constants
+// ==================================================================================================
+const pi = 3.14159265359;
 
 // ==================================================================================================
 // Top Section
 // ==================================================================================================
 const topSectionHeight = 4.0; // Tinggi top section dalam persen
 const topSectionSearchColor = lightGreen;
+const topSectionBorderColor = mediumGray;
 const topSectionIconPadding = 1.2; // Padding dalam persen
 const topSectionPadding = 2.5; // Padding luar dari top section dlm persen
+const topSectionSearchBoxRadius = 5.0; // Lengkungan search box dalam persen
+const topSectionSearchHint = 'Pencarian'; // Hint dari search box
 
 // Mengatur border dari search box di bagian atas screen
-OutlineInputBorder searchBoxBorder = OutlineInputBorder(
-  borderRadius: BorderRadius.circular(20.0),
-  borderSide: const BorderSide(
-    color: Color(0xFFD6D6D6),
-  ),
-);
+OutlineInputBorder searchBoxBorder(BuildContext context) {
+  return OutlineInputBorder(
+    borderRadius:
+        BorderRadius.circular(screenWidth(context, topSectionSearchBoxRadius)),
+    borderSide: const BorderSide(
+      color: topSectionBorderColor,
+    ),
+  );
+}
 
 EdgeInsets topSectionOuterPadding(BuildContext context) {
   return EdgeInsets.all(topSectionPadding * getMinARatio(context));
@@ -165,6 +188,43 @@ const igHeight = 60.0; // Tinggi area dalam persen
 const igWidth = 100.0; // Lebar area dalam persen
 const igBackgroundColor = mediumOrange;
 const igInsetPaddingRatio = 1.0; // Lebar pinggiran dalam persen
+const igTitleAngle = pi * 3 / 2;
+const igTitleBoxSize = 35.0; // Lebar kotak title dalam persen
+const igTitleLeftPaddingRatio = 2.5; // Jarak title dari kiri dalam persen
+const igIconLeftPaddingRatio = 9.0; // Jarak icon dari kiri dalam persen
+const igStatusLeftPaddingRatio = 25.0; // Jarak status dari kiri dalam persen
+const igHeadsetLeftPaddingRatio = 62.0; // Jarak headset dari kiri dlm persen
+const igIconPadding = 1.2; // Jarak antar icon dalam persen
+const igIconWidth = 7.0; // Lebar icon dalam persen
+const igIcon1 = 'thawaf-icon';
+const igIcon2 = 'sai-icon';
+const igIcon3 = 'wisata-icon';
+const igIcon4 = 'muthawif-icon';
+const igTitleText = 'Grup Interaktif';
+
+EdgeInsetsGeometry igTitleLeftPadding(BuildContext context) {
+  return EdgeInsets.only(top: screenWidth(context, igTitleLeftPaddingRatio));
+}
+
+double igIconLeftPadding(BuildContext context) {
+  return screenWidth(context, igIconLeftPaddingRatio);
+}
+
+double igStatusLeftPadding(BuildContext context) {
+  return screenWidth(context, igStatusLeftPaddingRatio);
+}
+
+double igHeadsetLeftPadding(BuildContext context) {
+  return screenWidth(context, igHeadsetLeftPaddingRatio);
+}
+
+double igTitleBoxWidth(BuildContext context) {
+  return screenWidth(context, igTitleBoxSize);
+}
+
+double igTitleBoxHeight(BuildContext context) {
+  return screenHeight(context, igTitleBoxSize);
+}
 
 EdgeInsetsGeometry igInsetPadding(BuildContext context) {
   return EdgeInsets.all(screenHeight(context, igInsetPaddingRatio));
