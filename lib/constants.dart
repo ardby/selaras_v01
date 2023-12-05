@@ -1,4 +1,6 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -69,14 +71,30 @@ Container showIconWidth(
   );
 }
 
-// ----------------------------------------------------------------------------
+// Menampilkan icon dengan size (dalam persen)
+Container showIconHeight(
+    BuildContext context, String iconFile, double padding, double height) {
+  return Container(
+    alignment: Alignment.center,
+    child: Padding(
+      padding: EdgeInsets.all(screenWidth(context, padding)),
+      child: Center(
+        child: SvgPicture.asset(
+          'assets/icons/$iconFile.svg',
+          fit: BoxFit.contain,
+          height: screenHeight(context, height),
+        ),
+      ),
+    ),
+  );
+}
 
 // ==================================================================================================
 // Color Definition
 // ==================================================================================================
 const mediumGreen = Color(0xFF03AC0E);
 const lightGreen = Color(0xFFEFFAF5);
-const strongGray = Color(0xFF606060);
+const strongGray = Color(0xFF595959);
 const mediumGray = Color(0xFFAAAAAA);
 const mediumOrange = Color(0xFFFCB259);
 const specialTextColor = Color(0xFF7E592C);
@@ -93,7 +111,7 @@ TextStyle smallText(BuildContext context, Color color) {
 
 TextStyle mediumText(BuildContext context, Color color) {
   return GoogleFonts.inter(
-    fontSize: 3.8 * getMinARatio(context),
+    fontSize: 4.2 * getMinARatio(context),
     fontWeight: FontWeight.w600,
     color: color,
   );
@@ -116,27 +134,29 @@ const pi = 3.14159265359;
 // ==================================================================================================
 // Top Section
 // ==================================================================================================
-const topSectionHeight = 4.0; // Tinggi top section dalam persen
-const topSectionSearchColor = lightGreen;
-const topSectionBorderColor = mediumGray;
-const topSectionIconPadding = 1.2; // Padding dalam persen
-const topSectionPadding = 2.5; // Padding luar dari top section dlm persen
-const topSectionSearchBoxRadius = 5.0; // Lengkungan search box dalam persen
-const topSectionSearchHint = 'Pencarian'; // Hint dari search box
+const tsHeight = 4.0; // Tinggi top section dalam persen
+const tsSearchColor = lightGreen;
+const tsBorderColor = mediumGray;
+const tsIconPadding = 1.2; // Padding dalam persen
+const tsPadding = 2.5; // Padding luar dari top section dlm persen
+const tsSearchBoxRadius = 5.0; // Lengkungan search box dalam persen
+const tsSearchHint = 'Pencarian'; // Hint dari search box
+const tsSettingIcon = 'setting-icon';
+const tsJamaahIcon = 'jamaah-icon';
 
 // Mengatur border dari search box di bagian atas screen
 OutlineInputBorder searchBoxBorder(BuildContext context) {
   return OutlineInputBorder(
     borderRadius:
-        BorderRadius.circular(screenWidth(context, topSectionSearchBoxRadius)),
+        BorderRadius.circular(screenWidth(context, tsSearchBoxRadius)),
     borderSide: const BorderSide(
-      color: topSectionBorderColor,
+      color: tsBorderColor,
     ),
   );
 }
 
-EdgeInsets topSectionOuterPadding(BuildContext context) {
-  return EdgeInsets.all(topSectionPadding * getMinARatio(context));
+EdgeInsets tsOuterPadding(BuildContext context) {
+  return EdgeInsets.all(tsPadding * getMinARatio(context));
 }
 
 // ==================================================================================================
@@ -156,7 +176,7 @@ const adIndicatorColor = mediumGray;
 const adActiveIndicatorColor = mediumGreen;
 const adDuration = Duration(seconds: 10);
 const adPercentageHeight = 20.0;
-const viewportFraction = 0.6;
+const adViewportFraction = 0.6;
 const adIndicatorWidth = 2.5; // Dalam persen terhadap lebar layar
 const adActiveIndicatorWidth = 3.0; // Dalam persen terhadap lebar layar
 const adAnimationDuration = Duration(milliseconds: 800);
@@ -192,10 +212,12 @@ const igTitleAngle = pi * 3 / 2;
 const igTitleBoxSize = 35.0; // Lebar kotak title dalam persen
 const igTitleLeftPaddingRatio = 2.5; // Jarak title dari kiri dalam persen
 const igIconLeftPaddingRatio = 9.0; // Jarak icon dari kiri dalam persen
-const igStatusLeftPaddingRatio = 25.0; // Jarak status dari kiri dalam persen
-const igHeadsetLeftPaddingRatio = 62.0; // Jarak headset dari kiri dlm persen
+const igStatusLeftPaddingRatio = 23.0; // Jarak status dari kiri dalam persen
+const igHeadsetLeftPaddingRatio = 60.0; // Jarak headset dari kiri dlm persen
 const igIconPadding = 1.2; // Jarak antar icon dalam persen
 const igIconWidth = 7.0; // Lebar icon dalam persen
+const igHeadsetIconHeight = igSafeAreaHeight - 3.5 * igIconPadding;
+const igSafeAreaHeight = igHeight - infoHeight - 2 * igInsetPaddingRatio;
 const igIcon1 = 'thawaf-icon';
 const igIcon2 = 'sai-icon';
 const igIcon3 = 'wisata-icon';
@@ -228,6 +250,48 @@ double igTitleBoxHeight(BuildContext context) {
 
 EdgeInsetsGeometry igInsetPadding(BuildContext context) {
   return EdgeInsets.all(screenHeight(context, igInsetPaddingRatio));
+}
+
+SizedBox igStatusJarak(BuildContext context) {
+  return SizedBox(
+    height: screenHeight(context, 2.0),
+  );
+}
+
+List<Widget> igStatusText(
+    BuildContext context, String connect, String headset) {
+  if (connect == 'N' && headset == 'N') {
+    return [
+      Text(
+        'Mohon siapkan\nheadset Anda',
+        style: mediumText(context, strongGray),
+      ),
+    ];
+  } else if (connect == 'N' && headset == 'Y') {
+    return [
+      Text(
+        'Headset Anda\ntelah terpasang',
+        style: mediumText(context, strongGray),
+      ),
+      igStatusJarak(context),
+      Text(
+        'Menunggu panggilan',
+        style: mediumText(context, strongGray),
+      ),
+    ];
+  } else {
+    return [];
+  }
+}
+
+String igHeadsetIconFile(String connect, String headset) {
+  if (connect == 'N' && headset == 'N') {
+    return 'headset-off';
+  } else if (connect == 'N' && headset == 'Y') {
+    return 'headset-connect';
+  } else {
+    return '';
+  }
 }
 
 // ==================================================================================================

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:selaras_v01/constants.dart';
 
 class InfoSection extends StatefulWidget {
-  List<dynamic> appData;
+  final List<dynamic> appData;
 
-  InfoSection({
+  const InfoSection({
     Key? key,
     required this.appData,
   }) : super(key: key);

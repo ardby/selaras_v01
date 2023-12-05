@@ -14,43 +14,44 @@ class TopSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<HeadsetStatusNotifier>(
-        builder: (context, headsetStatus, child) {
-      return Padding(
-        padding: topSectionOuterPadding(context),
-        child: SizedBox(
-          height: screenHeight(context, topSectionHeight),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: TextField(
-                  style: smallText(context, strongGray),
-                  textAlignVertical: TextAlignVertical.center,
-                  decoration: InputDecoration(
-                    hintText: topSectionSearchHint,
-                    hintStyle: smallText(context, mediumGray),
-                    focusColor: strongGray,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                    isDense: true,
-                    enabledBorder: searchBoxBorder(context),
-                    focusedBorder: searchBoxBorder(context),
-                    filled: true,
-                    fillColor: topSectionSearchColor,
-                    prefixIcon: const CustomSearchIcon(),
+      builder: (context, headsetStatus, child) {
+        String connectStat = 'N'; // Akan ditambah consumer untuk connection
+        String headsetStat = headsetStatus.isHeadsetConnected ? 'Y' : 'N';
+        return Padding(
+          padding: tsOuterPadding(context),
+          child: SizedBox(
+            height: screenHeight(context, tsHeight),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: TextField(
+                    style: smallText(context, strongGray),
+                    textAlignVertical: TextAlignVertical.center,
+                    decoration: InputDecoration(
+                      hintText: tsSearchHint,
+                      hintStyle: smallText(context, mediumGray),
+                      focusColor: strongGray,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                      isDense: true,
+                      enabledBorder: searchBoxBorder(context),
+                      focusedBorder: searchBoxBorder(context),
+                      filled: true,
+                      fillColor: tsSearchColor,
+                      prefixIcon: const CustomSearchIcon(),
+                    ),
                   ),
                 ),
-              ),
-              showIcon(
-                  context,
-                  headsetStatus.isHeadsetConnected ? 'CNHY' : 'CNHN',
-                  topSectionIconPadding),
-              showIcon(context, 'setting-icon', topSectionIconPadding),
-              showIcon(context, 'jamaah-icon', topSectionIconPadding),
-            ],
+                showIcon(
+                    context, 'C${connectStat}H${headsetStat}', tsIconPadding),
+                showIcon(context, tsSettingIcon, tsIconPadding),
+                showIcon(context, tsJamaahIcon, tsIconPadding),
+              ],
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }
 
@@ -71,7 +72,7 @@ class CustomSearchIconState extends State<CustomSearchIcon> {
       onExit: (_) => setState(() => isHovered = false),
       child: IconButton(
         icon: const Icon(Icons.search),
-        padding: EdgeInsets.all(0.0),
+        padding: const EdgeInsets.all(0.0),
         iconSize: 4 * getMinARatio(context),
         alignment: Alignment.center,
         onPressed: () {
