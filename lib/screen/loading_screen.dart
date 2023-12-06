@@ -36,18 +36,19 @@ class LoadingScreenState extends State<LoadingScreen> {
   }
 
   void setupHeadset() {
-    /// Mengambil status headset
-    _headsetPlugin
-        .requestPermission(); // Request Permissions (Required for Android 12)
+    /// Meminta izin (khusus untuk Android 12 ke atas)
+    _headsetPlugin.requestPermission();
+
+    /// Baca status headset
     _headsetPlugin.getCurrentState.then((val) {
-      // if headset is plugged
       setState(() {
         _headsetState = val;
         onHeadsetStatusChanged(_headsetState == HeadsetState.CONNECT);
       });
     });
+
+    /// Deteksi saat headset dipasang atau dilepas
     _headsetPlugin.setListener((val) {
-      // Detect the moment headset is plugged or unplugged
       setState(() {
         _headsetState = val;
         onHeadsetStatusChanged(_headsetState == HeadsetState.CONNECT);
@@ -56,16 +57,20 @@ class LoadingScreenState extends State<LoadingScreen> {
   }
 
   void setupCall() async {
+    /// Ambil ID dari device
     await setupDeviceID();
 
-    /// Ambil ID dari device
-
     /// Mengambil data cari call
-    final channel = IOWebSocketChannel.connect('ws://batman.id:3002');
-    channel.sink.add('C:$deviceID'); // kirim Device ID ke server
+    final channel = IOWebSocketChannel.connect(wsAddress);
+
+    /// Informasikan websocket server bahwa Device ini sudah connect
+    channel.sink.add('C:$deviceID');
+
+    /// Buat notifier untuk consumer widgets yang membutuhkan status call
     final CallNotifier callNotifier =
         Provider.of<CallNotifier>(context, listen: false);
 
+    /// Ambil jika ada message yang masuk dari websocket
     channel.stream.listen((message) {
       callNotifier.receiveMessage(message, channel);
       // Lakukan sesuatu di sini kalau diperlukan
