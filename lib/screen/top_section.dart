@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:selaras_v01/constants.dart';
 import '../services/headset_notifier.dart';
+import '../services/call_notifier.dart';
 import 'package:provider/provider.dart';
 
 class TopSection extends StatelessWidget {
@@ -13,9 +14,15 @@ class TopSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HeadsetStatusNotifier>(
-      builder: (context, headsetStatus, child) {
+    return Consumer2<HeadsetStatusNotifier, CallNotifier>(
+      builder: (context, headsetStatus, callStatus, child) {
         String connectStat = 'N'; // Akan ditambah consumer untuk connection
+        if (callStatus.receivedMessage.toLowerCase() == "call") {
+          connectStat = 'D';
+        }
+        if (callStatus.receivedMessage.toLowerCase() == "end") {
+          connectStat = 'N';
+        }
         String headsetStat = headsetStatus.isHeadsetConnected ? 'Y' : 'N';
         return Padding(
           padding: tsOuterPadding(context),

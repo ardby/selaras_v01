@@ -5,7 +5,10 @@ import 'screen_layout.dart';
 import '../services/api_service.dart';
 import '../services/data_notifier.dart';
 import '../services/headset_notifier.dart';
+import '../services/call_notifier.dart';
 import 'package:headset_connection_event/headset_event.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:selaras_v01/constants.dart';
 //import 'archive/app_title.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -27,29 +30,54 @@ class LoadingScreenState extends State<LoadingScreen> {
     notifier.updateHeadsetStatus(isConnected);
   }
 
+  void setupData() {
+    /// Mengambil data dari database API
+    _futureData = _fetchData();
+  }
+
+  void setupHeadset() {
+    /// Mengambil status headset
+    _headsetPlugin
+        .requestPermission(); // Request Permissions (Required for Android 12)
+    _headsetPlugin.getCurrentState.then((val) {
+      // if headset is plugged
+      setState(() {
+        _headsetState = val;
+        onHeadsetStatusChanged(_headsetState == HeadsetState.CONNECT);
+      });
+    });
+    _headsetPlugin.setListener((val) {
+      // Detect the moment headset is plugged or unplugged
+      setState(() {
+        _headsetState = val;
+        onHeadsetStatusChanged(_headsetState == HeadsetState.CONNECT);
+      });
+    });
+  }
+
+  void setupCall() async {
+    await setupDeviceID();
+
+    /// Ambil ID dari device
+
+    /// Mengambil data cari call
+    final channel = IOWebSocketChannel.connect('ws://batman.id:3002');
+    channel.sink.add('C:$deviceID'); // kirim Device ID ke server
+    final CallNotifier callNotifier =
+        Provider.of<CallNotifier>(context, listen: false);
+
+    channel.stream.listen((message) {
+      callNotifier.receiveMessage(message, channel);
+      // Lakukan sesuatu di sini kalau diperlukan
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    _futureData = _fetchData();
-
-    ///Request Permissions (Required for Android 12)
-    _headsetPlugin.requestPermission();
-
-    /// if headset is plugged
-    _headsetPlugin.getCurrentState.then((val) {
-      setState(() {
-        _headsetState = val;
-        onHeadsetStatusChanged(_headsetState == HeadsetState.CONNECT);
-      });
-    });
-
-    /// Detect the moment headset is plugged or unplugged
-    _headsetPlugin.setListener((val) {
-      setState(() {
-        _headsetState = val;
-        onHeadsetStatusChanged(_headsetState == HeadsetState.CONNECT);
-      });
-    });
+    setupData();
+    setupHeadset();
+    setupCall();
   }
 
   Future<List<dynamic>> _fetchData() async {

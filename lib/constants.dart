@@ -1,8 +1,12 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'services/id_manager.dart';
+
+// ==================================================================================================
+// Global Variables
+// ==================================================================================================
+String deviceID = '';
 
 // ==================================================================================================
 // Common Functions
@@ -89,14 +93,23 @@ Container showIconHeight(
   );
 }
 
+Future<void> setupDeviceID() async {
+  if (deviceID == '') {
+    IdManager idManager = IdManager();
+    deviceID = await idManager.getID();
+  }
+}
+
 // ==================================================================================================
 // Color Definition
 // ==================================================================================================
 const mediumGreen = Color(0xFF03AC0E);
+const shadowGreen = Color(0xFF028C0B);
 const lightGreen = Color(0xFFEFFAF5);
 const strongGray = Color(0xFF595959);
 const mediumGray = Color(0xFFAAAAAA);
 const mediumOrange = Color(0xFFFCB259);
+const shadowRed = Color(0xFF96030C);
 const specialTextColor = Color(0xFF7E592C);
 
 // ==================================================================================================
@@ -279,6 +292,25 @@ List<Widget> igStatusText(
         style: mediumText(context, strongGray),
       ),
     ];
+  } else if (connect == 'D' && headset == 'N') {
+    return [
+      Text(
+        'PANGGILAN\nMASUK ...',
+        style: mediumText(context, shadowRed),
+      ),
+      igStatusJarak(context),
+      Text(
+        'Pasang headset\nAnda SEKARANG',
+        style: mediumText(context, strongGray),
+      ),
+    ];
+  } else if (connect == 'D' && headset == 'Y') {
+    return [
+      Text(
+        'PANGGILAN\nMASUK ...',
+        style: mediumText(context, shadowRed),
+      ),
+    ];
   } else {
     return [];
   }
@@ -288,6 +320,10 @@ String igHeadsetIconFile(String connect, String headset) {
   if (connect == 'N' && headset == 'N') {
     return 'headset-off';
   } else if (connect == 'N' && headset == 'Y') {
+    return 'headset-connect';
+  } else if (connect == 'D' && headset == 'N') {
+    return 'headset-disconnect';
+  } else if (connect == 'D' && headset == 'Y') {
     return 'headset-connect';
   } else {
     return '';
