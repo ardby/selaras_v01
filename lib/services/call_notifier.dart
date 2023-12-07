@@ -14,12 +14,12 @@ class CallNotifier extends ChangeNotifier {
     /// Acknowledge server dengan Device ID
     /// Device ID ini seharusnya dicek dulu di file di device apakah ada
     /// Jika sudah ada, ambil dari file itu dan jika blm ada maka tulis ke situ
-    channel.sink.add('R:$deviceID:$message');
+    if (message != "DISCONNECT") channel.sink.add('R:$deviceID:$message');
     _receivedMessage = message; // Simpan pesan yang diterima
     // Emit pesan ke dalam stream controller untuk digunakan dalam aplikasi
     _messageController.add(message);
     // Pemberitahuan bahwa terjadi perubahan pada data
-    notifyListeners();
+    if (message != "PONG") notifyListeners();
   }
 
   @override

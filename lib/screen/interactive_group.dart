@@ -16,14 +16,8 @@ class InteractiveGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer2<HeadsetStatusNotifier, CallNotifier>(
       builder: (context, headsetStatus, callStatus, child) {
-        String connectStat = 'N'; // Akan ditambah consumer untuk connection
-        if (callStatus.receivedMessage.toLowerCase() == "call") {
-          connectStat = 'D';
-        }
-        if (callStatus.receivedMessage.toLowerCase() == "end") {
-          connectStat = 'N';
-        }
-        String headsetStat = headsetStatus.isHeadsetConnected ? 'Y' : 'N';
+        String connectStat = callStat(callStatus.receivedMessage);
+        String headsetStat = headStat(headsetStatus.isHeadsetConnected);
         return Container(
           padding: igInsetPadding(context),
           width: screenWidth(context, igWidth),

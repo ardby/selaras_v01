@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'screen_layout.dart';
 import '../services/api_service.dart';
@@ -30,8 +31,9 @@ class LoadingScreenState extends State<LoadingScreen> {
 
   /// Variabel untuk mengurus call websocket
   late CallNotifier callNotifier;
-  late bool _connectionStatus = true;
+  late bool _checkConnection = true;
   late Timer _heartbeatTimer;
+  late String _wsStatus = 'connected';
 
   /// Menghubungi websocket begitu aplikasi dijalankan
   IOWebSocketChannel channel = IOWebSocketChannel.connect(wsAddress);
@@ -76,7 +78,8 @@ class LoadingScreenState extends State<LoadingScreen> {
     // Ambil jika ada message yang masuk dari websocket
     channel.stream.listen((message) {
       callNotifier.receiveMessage(message, channel);
-      _connectionStatus = true;
+      _checkConnection = true;
+      if (_wsStatus == 'disconnected') _wsStatus = 'connected';
     });
     _heartBeatCheck();
   }
@@ -84,19 +87,30 @@ class LoadingScreenState extends State<LoadingScreen> {
   /// HeartBeat: mengecek koneksi setiap 5 detik
   /// Yaitu mengirim message 'PING' dan server akan membalas dengan 'PONG'
   void _heartBeatCheck() {
-    _heartbeatTimer = Timer.periodic(Duration(seconds: 5), (timer) {
-      if (_connectionStatus == false) {
+    _heartbeatTimer = Timer.periodic(Duration(seconds: 5), (timer) async {
+      if (_checkConnection == false) {
+        _wsStatus = 'disconnected';
+        callNotifier.receiveMessage('DISCONNECT', channel);
         _heartbeatTimer.cancel();
         channel.sink.close();
-
-        /// Buat channel baru
-        IOWebSocketChannel newchannel = IOWebSocketChannel.connect(wsAddress);
-        channel = newchannel;
-        _connectionStatus = true;
+        // Buat channel baru dan pindahkan channel ke situ
+        try {
+          IOWebSocketChannel newchannel = IOWebSocketChannel.connect(wsAddress,
+              connectTimeout: Duration(seconds: 3));
+          channel = newchannel;
+          _checkConnection = true;
+        } catch (error) {
+          _checkConnection = false;
+        }
         connectWebSocket();
       } else {
+        if (_wsStatus == 'connected') {
+          callNotifier.receiveMessage('CONNECT', channel);
+          _wsStatus = "online";
+        }
+
         // Set false dulu sbg default
-        _connectionStatus = false;
+        _checkConnection = false;
         channel.sink.add('P:$deviceID');
       }
     });
