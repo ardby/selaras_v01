@@ -104,6 +104,25 @@ Future<void> setupDeviceID() async {
   }
 }
 
+String callStat(String stat) {
+  String connectStat = 'N';
+  if (stat.toLowerCase() == "connect") {
+    connectStat = 'N';
+  } else if (stat.toLowerCase() == "disconnect") {
+    connectStat = 'X';
+  } else if (stat.toLowerCase() == "call") {
+    connectStat = 'D';
+  } else if (stat.toLowerCase() == "end") {
+    connectStat = 'N';
+  }
+  return connectStat;
+}
+
+String headStat(bool stat) {
+  String headsetStat = stat ? 'Y' : 'N';
+  return headsetStat;
+}
+
 /// ==================================================================================================
 /// Color Definition
 /// ==================================================================================================
@@ -315,13 +334,20 @@ List<Widget> igStatusText(
         style: mediumText(context, shadowRed),
       ),
     ];
+  } else if (connect == 'X') {
+    return [
+      Text(
+        'Tidak ada\nKoneksi internet',
+        style: mediumText(context, shadowRed),
+      ),
+    ];
   } else {
     return [];
   }
 }
 
 String igHeadsetIconFile(String connect, String headset) {
-  if (connect == 'N' && headset == 'N') {
+  if (connect != 'Y' && headset == 'N') {
     return 'headset-off';
   } else if (connect == 'N' && headset == 'Y') {
     return 'headset-connect';
