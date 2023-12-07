@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,6 @@ import 'package:selaras_v01/constants.dart';
 
 class LoadingScreen extends StatefulWidget {
   LoadingScreen({Key? key}) : super(key: key);
-
   final ApiService apiService = ApiService();
 
   @override
@@ -21,25 +21,38 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class LoadingScreenState extends State<LoadingScreen> {
+  /// Variabel untuk persiapan database API
   late Future<List<dynamic>> _futureData;
+
+  /// Variabel untuk mengurus headset
   final _headsetPlugin = HeadsetEvent();
   HeadsetState? _headsetState;
 
+  /// Variabel untuk mengurus call websocket
+  late CallNotifier callNotifier;
+  late bool _connectionStatus = true;
+  late Timer _heartbeatTimer;
+
+  /// Menghubungi websocket begitu aplikasi dijalankan
+  IOWebSocketChannel channel = IOWebSocketChannel.connect(wsAddress);
+
+  /// Mengambil data dari database API
+  void setupData() {
+    _futureData = _fetchData();
+  }
+
+  /// Notifier ketika status headset berubah
   void onHeadsetStatusChanged(bool isConnected) {
     final notifier = Provider.of<HeadsetStatusNotifier>(context, listen: false);
     notifier.updateHeadsetStatus(isConnected);
   }
 
-  void setupData() {
-    /// Mengambil data dari database API
-    _futureData = _fetchData();
-  }
-
+  /// Menyiapkan pemeriksaan status headset
   void setupHeadset() {
-    /// Meminta izin (khusus untuk Android 12 ke atas)
+    // Meminta izin (khusus untuk Android 12 ke atas)
     _headsetPlugin.requestPermission();
 
-    /// Baca status headset
+    // Baca status headset
     _headsetPlugin.getCurrentState.then((val) {
       setState(() {
         _headsetState = val;
@@ -47,7 +60,7 @@ class LoadingScreenState extends State<LoadingScreen> {
       });
     });
 
-    /// Deteksi saat headset dipasang atau dilepas
+    // Deteksi saat headset dipasang atau dilepas
     _headsetPlugin.setListener((val) {
       setState(() {
         _headsetState = val;
@@ -56,25 +69,46 @@ class LoadingScreenState extends State<LoadingScreen> {
     });
   }
 
-  void setupCall() async {
-    /// Ambil ID dari device
-    await setupDeviceID();
-
-    /// Mengambil data cari call
-    final channel = IOWebSocketChannel.connect(wsAddress);
-
-    /// Informasikan websocket server bahwa Device ini sudah connect
+  /// Buat koneksi batu ke websocket, dan aktifkan hearbeat
+  void connectWebSocket() {
+    // Informasikan websocket server bahwa Device ini sudah connect
     channel.sink.add('C:$deviceID');
-
-    /// Buat notifier untuk consumer widgets yang membutuhkan status call
-    final CallNotifier callNotifier =
-        Provider.of<CallNotifier>(context, listen: false);
-
-    /// Ambil jika ada message yang masuk dari websocket
+    // Ambil jika ada message yang masuk dari websocket
     channel.stream.listen((message) {
       callNotifier.receiveMessage(message, channel);
-      // Lakukan sesuatu di sini kalau diperlukan
+      _connectionStatus = true;
     });
+    _heartBeatCheck();
+  }
+
+  /// HeartBeat: mengecek koneksi setiap 5 detik
+  /// Yaitu mengirim message 'PING' dan server akan membalas dengan 'PONG'
+  void _heartBeatCheck() {
+    _heartbeatTimer = Timer.periodic(Duration(seconds: 5), (timer) {
+      if (_connectionStatus == false) {
+        _heartbeatTimer.cancel();
+        channel.sink.close();
+
+        /// Buat channel baru
+        IOWebSocketChannel newchannel = IOWebSocketChannel.connect(wsAddress);
+        channel = newchannel;
+        _connectionStatus = true;
+        connectWebSocket();
+      } else {
+        // Set false dulu sbg default
+        _connectionStatus = false;
+        channel.sink.add('P:$deviceID');
+      }
+    });
+  }
+
+  /// Menyiapkan pemanggilan ke websocket
+  void setupCall() async {
+    // Ambil ID dari device
+    await setupDeviceID();
+    // Buat notifier untuk consumer widgets yang membutuhkan status call
+    callNotifier = Provider.of<CallNotifier>(context, listen: false);
+    connectWebSocket();
   }
 
   @override

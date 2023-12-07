@@ -1,4 +1,6 @@
 // server.js
+// Sementara belum dengan group maupun muthawif
+// Sudah ditambahkan jika PING-PONG untuk heartbeat
 const WebSocket = require('ws');
 
 const server = new WebSocket.Server({ port: 3002 });
@@ -35,6 +37,10 @@ server.on('connection', (socket) => {
     }
     else if(tokens[0] == "R") {
       console.log(`${ts}: ${tokens[1]} receive: ${tokens[2]}`);
+    }
+    else if(tokens[0] == "P") {
+      clients.get(tokens[1]).send(`PONG`);
+      console.log(`${ts}: PING from ${tokens[1]}`);
     }
     // Meneruskan pesan ke semua klien
     else clients.forEach((socketnya) => {
