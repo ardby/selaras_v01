@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:selaras_v01/constants.dart';
-import '../services/headset_notifier.dart';
-import '../services/call_notifier.dart';
 import 'package:provider/provider.dart';
 import 'search.dart';
+import '../services/headset_notifier.dart';
+import '../services/call_notifier.dart';
 
 class TopSection extends StatelessWidget {
   final List<dynamic> appData;
@@ -28,7 +28,7 @@ class TopSection extends StatelessWidget {
               children: [
                 searchBox(context),
                 showIcon(
-                    context, 'C${connectStat}H${headsetStat}', tsIconPadding),
+                    context, 'C${connectStat}H$headsetStat', tsIconPadding),
                 showIcon(context, tsSettingIcon, tsIconPadding),
                 showIcon(context, tsJamaahIcon, tsIconPadding),
               ],

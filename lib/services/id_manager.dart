@@ -4,7 +4,7 @@ import 'package:path_provider/path_provider.dart';
 
 class IdManager {
   final String _fileName = 'selaras_id.txt';
-  final Uuid _uuid = Uuid();
+  final Uuid _uuid = const Uuid();
 
   Future<String> getID() async {
     final directory = await getApplicationDocumentsDirectory();

@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:provider/provider.dart';
+import 'package:headset_connection_event/headset_event.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:selaras_v01/constants.dart';
 import 'screen_layout.dart';
 import '../services/api_service.dart';
 import '../services/data_notifier.dart';
 import '../services/headset_notifier.dart';
 import '../services/call_notifier.dart';
-import 'package:headset_connection_event/headset_event.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:selaras_v01/constants.dart';
 //import 'archive/app_title.dart';
 
 class LoadingScreen extends StatefulWidget {
