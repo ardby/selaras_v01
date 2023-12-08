@@ -302,6 +302,7 @@ SizedBox igStatusJarak(BuildContext context) {
   );
 }
 
+// Variasi tulisan pada status sesuai  koneksi websocket dan  headset
 List<Widget> igStatusText(
     BuildContext context, String connect, String headset) {
   if (connect == 'N' && headset == 'N') {
