@@ -248,8 +248,11 @@ BorderRadius adBorderRadius(BuildContext context) {
 const igHeight = 60.0; // Tinggi area dalam persen
 const igWidth = 100.0; // Lebar area dalam persen
 const igBackgroundColor = mediumOrange;
+const igStatusTextColorInfo = strongGray;
+const igStatusTextColorAlert = shadowRed;
+const igStatusTextColorGoodNews = shadowGreen;
 const igInsetPaddingRatio = 1.0; // Lebar pinggiran dalam persen
-const igTitleAngle = pi * 3 / 2;
+const igTitleAngle = pi * 3 / 2; // Sudut putar tulisan title (90 derajat)
 const igTitleBoxSize = 35.0; // Lebar kotak title dalam persen
 const igTitleLeftPaddingRatio = 2.5; // Jarak title dari kiri dalam persen
 const igIconLeftPaddingRatio = 9.0; // Jarak icon dari kiri dalam persen
@@ -305,45 +308,45 @@ List<Widget> igStatusText(
     return [
       Text(
         'Mohon siapkan\nheadset Anda',
-        style: mediumText(context, strongGray),
+        style: mediumText(context, igStatusTextColorInfo),
       ),
     ];
   } else if (connect == 'N' && headset == 'Y') {
     return [
       Text(
         'Headset Anda\ntelah terpasang',
-        style: mediumText(context, strongGray),
+        style: mediumText(context, igStatusTextColorInfo),
       ),
       igStatusJarak(context),
       Text(
         'Menunggu panggilan',
-        style: mediumText(context, strongGray),
+        style: mediumText(context, igStatusTextColorInfo),
       ),
     ];
   } else if (connect == 'D' && headset == 'N') {
     return [
       Text(
         'PANGGILAN\nMASUK ...',
-        style: mediumText(context, shadowRed),
+        style: mediumText(context, igStatusTextColorAlert),
       ),
       igStatusJarak(context),
       Text(
         'Pasang headset\nAnda SEKARANG',
-        style: mediumText(context, strongGray),
+        style: mediumText(context, igStatusTextColorInfo),
       ),
     ];
   } else if (connect == 'D' && headset == 'Y') {
     return [
       Text(
         'PANGGILAN\nMASUK ...',
-        style: mediumText(context, shadowRed),
+        style: mediumText(context, igStatusTextColorAlert),
       ),
     ];
   } else if (connect == 'X') {
     return [
       Text(
         'Tidak ada\nKoneksi internet',
-        style: mediumText(context, shadowRed),
+        style: mediumText(context, igStatusTextColorAlert),
       ),
     ];
   } else {
