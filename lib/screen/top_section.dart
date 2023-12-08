@@ -3,6 +3,7 @@ import 'package:selaras_v01/constants.dart';
 import '../services/headset_notifier.dart';
 import '../services/call_notifier.dart';
 import 'package:provider/provider.dart';
+import 'search.dart';
 
 class TopSection extends StatelessWidget {
   final List<dynamic> appData;
@@ -25,24 +26,7 @@ class TopSection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Expanded(
-                  child: TextField(
-                    style: smallText(context, strongGray),
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                      hintText: tsSearchHint,
-                      hintStyle: smallText(context, mediumGray),
-                      focusColor: strongGray,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                      isDense: true,
-                      enabledBorder: searchBoxBorder(context),
-                      focusedBorder: searchBoxBorder(context),
-                      filled: true,
-                      fillColor: tsSearchColor,
-                      prefixIcon: const CustomSearchIcon(),
-                    ),
-                  ),
-                ),
+                searchBox(context),
                 showIcon(
                     context, 'C${connectStat}H${headsetStat}', tsIconPadding),
                 showIcon(context, tsSettingIcon, tsIconPadding),
@@ -52,35 +36,6 @@ class TopSection extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class CustomSearchIcon extends StatefulWidget {
-  const CustomSearchIcon({super.key});
-
-  @override
-  CustomSearchIconState createState() => CustomSearchIconState();
-}
-
-class CustomSearchIconState extends State<CustomSearchIcon> {
-  bool isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => isHovered = true),
-      onExit: (_) => setState(() => isHovered = false),
-      child: IconButton(
-        icon: const Icon(Icons.search),
-        padding: const EdgeInsets.all(0.0),
-        iconSize: 4 * getMinARatio(context),
-        alignment: Alignment.center,
-        onPressed: () {
-          // Handle search button press
-        },
-        color: isHovered ? strongGray : mediumGray,
-      ),
     );
   }
 }
