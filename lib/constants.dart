@@ -4,10 +4,29 @@ import 'package:google_fonts/google_fonts.dart';
 import 'services/id_manager.dart';
 
 /// ==================================================================================================
+/// Common Constants
+/// ==================================================================================================
+const pi = 3.14159265359;
+const wsDomain = 'batman.id';
+const wsPort = 3002;
+
+/// ==================================================================================================
 /// Global Variables
 /// ==================================================================================================
 String deviceID = '';
-String wsAddress = 'ws://batman.id:3002';
+String wsAddress = 'ws://$wsDomain:$wsPort';
+
+/// ==================================================================================================
+/// Color Definition
+/// ==================================================================================================
+const mediumGreen = Color(0xFF03AC0E);
+const shadowGreen = Color(0xFF028C0B);
+const lightGreen = Color(0xFFEFFAF5);
+const strongGray = Color(0xFF595959);
+const mediumGray = Color(0xFFAAAAAA);
+const mediumOrange = Color(0xFFFCB259);
+const shadowRed = Color(0xFF96030C);
+const specialTextColor = Color(0xFF7E592C);
 
 /// ==================================================================================================
 /// Common Functions
@@ -43,6 +62,7 @@ double getMaxARatio(BuildContext context) {
   double rY = screenWidth(context, 1.0);
   return rX > rY ? rX : rY;
 }
+// --------------------------------------------------------------------------
 
 // Menampilkan icon
 Container showIcon(BuildContext context, String iconFile, double padding) {
@@ -94,9 +114,9 @@ Container showIconHeight(
   );
 }
 
-/// Buat ID jika device baru, atau ambil dari local storage, jika sudah pernah digunakan
-/// ID ini akan menetap dan tidab berubah selama aplikasi ini ada.
-/// Digunakan juga sebagai unique device ID di dalam database untuk pendaftaran user
+// Buat ID jika device baru, atau ambil dari local storage, jika sudah pernah digunakan
+// ID ini akan menetap dan tidab berubah selama aplikasi ini ada.
+// Digunakan juga sebagai unique device ID di dalam database untuk pendaftaran user
 Future<void> setupDeviceID() async {
   if (deviceID == '') {
     IdManager idManager = IdManager();
@@ -104,6 +124,7 @@ Future<void> setupDeviceID() async {
   }
 }
 
+// Standarisasi status connect di websocket berdasarkan status call
 String callStat(String stat) {
   String connectStat = 'N';
   if (stat.toLowerCase() == "connect") {
@@ -118,22 +139,11 @@ String callStat(String stat) {
   return connectStat;
 }
 
+// Standarisasi status headset
 String headStat(bool stat) {
   String headsetStat = stat ? 'Y' : 'N';
   return headsetStat;
 }
-
-/// ==================================================================================================
-/// Color Definition
-/// ==================================================================================================
-const mediumGreen = Color(0xFF03AC0E);
-const shadowGreen = Color(0xFF028C0B);
-const lightGreen = Color(0xFFEFFAF5);
-const strongGray = Color(0xFF595959);
-const mediumGray = Color(0xFFAAAAAA);
-const mediumOrange = Color(0xFFFCB259);
-const shadowRed = Color(0xFF96030C);
-const specialTextColor = Color(0xFF7E592C);
 
 /// ==================================================================================================
 /// Text Definition
@@ -161,11 +171,6 @@ TextStyle specialText(BuildContext context) {
     letterSpacing: 0.8,
   );
 }
-
-/// ==================================================================================================
-/// Other Common Constants
-/// ==================================================================================================
-const pi = 3.14159265359;
 
 /// ==================================================================================================
 /// Top Section
